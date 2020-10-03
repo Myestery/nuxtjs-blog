@@ -1,14 +1,12 @@
 <template>
-  <test/>
+  <div>
+      Custom component
+  </div>
 </template>
 
 <script>
 export default {
-  head(){
-    return{
-      titie:"About Page"
-    }
-  }
+
 }
 </script>
 
