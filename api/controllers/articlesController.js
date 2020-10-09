@@ -87,7 +87,8 @@ module.exports.update = [
       if (article !== null) {
         return Promise.reject('Title already in use');
       }
-    })
+      })
+    
   }),
   validator.body('author', 'Please enter Author Name').isLength({ min: 1 }),
   validator.body('body', 'Please enter Article Content').isLength({ min: 1 }),
