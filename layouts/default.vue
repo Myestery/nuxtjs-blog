@@ -1,29 +1,31 @@
 <template>
   <div>
-    <v-app>
-      <v-card class>
-        <v-app-bar color="deep-purple" dark>
+    <v-app light>
+      <v-card class="overflow-hidden" height="100%">
+        <v-app-bar>
           <v-app-bar-nav-icon @click="drawer = true"></v-app-bar-nav-icon>
 
-          <v-toolbar-title>Title</v-toolbar-title>
+          <v-toolbar-title>Blog</v-toolbar-title>
+          <v-spacer></v-spacer>
+          <v-btn rounded icon fab color="pink">
+            <v-icon>search</v-icon>
+          </v-btn>
         </v-app-bar>
 
         <v-navigation-drawer v-model="drawer" absolute temporary>
           <v-list nav dense>
             <v-list-item-group active-class="deep-purple--text text--accent-4">
-              <v-list-item>
+              <v-list-item to="/">
                 <v-list-item-icon>
                   <v-icon>mdi-home</v-icon>
                 </v-list-item-icon>
-                <nuxt-link to="/">Home</nuxt-link>
                 <v-list-item-title>Home</v-list-item-title>
               </v-list-item>
 
-              <v-list-item>
+              <v-list-item to="/inspire">
                 <v-list-item-icon>
                   <v-icon>mdi-account</v-icon>
                 </v-list-item-icon>
-                <nuxt-link to="/inspire">Inspire</nuxt-link>
                 <v-list-item-title>Account</v-list-item-title>
               </v-list-item>
             </v-list-item-group>
@@ -50,3 +52,5 @@ export default {
   },
 };
 </script>
+<style scoped>
+</style>
