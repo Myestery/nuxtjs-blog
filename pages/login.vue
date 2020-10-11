@@ -1,111 +1,62 @@
 <template>
-  <form>
-    <v-text-field
-      v-model="name"
-      :error-messages="nameErrors"
-      :counter="10"
-      label="Name"
-      required
-      @input="$v.name.$touch()"
-      @blur="$v.name.$touch()"
-    ></v-text-field>
-    <v-text-field
-      v-model="email"
-      :error-messages="emailErrors"
-      label="E-mail"
-      required
-      @input="$v.email.$touch()"
-      @blur="$v.email.$touch()"
-    ></v-text-field>
-    <v-select
-      v-model="select"
-      :items="items"
-      :error-messages="selectErrors"
-      label="Item"
-      required
-      @change="$v.select.$touch()"
-      @blur="$v.select.$touch()"
-    ></v-select>
-    <v-checkbox
-      v-model="checkbox"
-      :error-messages="checkboxErrors"
-      label="Do you agree?"
-      required
-      @change="$v.checkbox.$touch()"
-      @blur="$v.checkbox.$touch()"
-    ></v-checkbox>
+  <v-app>
+    <v-card class="mx-auto" max-width="700" outlined style="margin-top:70px; width:500px">
+      <v-list-item three-line>
+        <v-list-item-content>
+          <div class="overline mb-4">LOGIN</div>
+          <v-form v-model="valid">
+            <v-container>
+              <v-text-field v-model="email" :rules="emailRules" label="E-mail" required clearable></v-text-field>
+              <v-text-field
+                :append-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
+                :rules="passwordRules"
+                :type="showPassword ? 'text' : 'password'"
+                name="input-10-2"
+                label="Password"
+                hint="At least 8 characters"
+                v-model="password"
+                class="input-group--focused"
+                @click:append="showPassword = !showPassword"
+              ></v-text-field>
+            </v-container>
+          </v-form>
+        </v-list-item-content>
+      </v-list-item>
 
-    <v-btn class="mr-4" @click="submit">submit</v-btn>
-    <v-btn @click="clear">clear</v-btn>
-  </form>
+      <v-card-actions>
+        <v-btn style="margin-left:30px" depressed color="primary" :disabled="!valid" @click="login">LOGIN</v-btn>
+      </v-card-actions>
+     <small> Not Registered, Click here to <nuxt-link to="register">Sign UP</nuxt-link></small>
+    </v-card>
+  </v-app>
 </template>
-    <script>
-import { validationMixin } from "vuelidate";
-import { required, maxLength, email } from "vuelidate/lib/validators";
 
+<script>
 export default {
-  mixins: [validationMixin],
-
-  validations: {
-    name: { required, maxLength: maxLength(10) },
-    email: { required, email },
-    select: { required },
-    checkbox: {
-      checked(val) {
-        return val;
-      },
-    },
-  },
-
   data: () => ({
-    name: "",
+    valid: false,
+    passwordRules: [(v) => !!v || "Password is required"],
+    showPassword: false,
     email: "",
-    select: null,
-    items: ["Item 1", "Item 2", "Item 3", "Item 4"],
-    checkbox: false,
+    password: "",
+    emailRules: [
+      (v) => !!v || "E-mail is required",
+      (v) => /.+@.+/.test(v) || "E-mail must be valid",
+    ],
   }),
-
-  computed: {
-    checkboxErrors() {
-      const errors = [];
-      if (!this.$v.checkbox.$dirty) return errors;
-      !this.$v.checkbox.checked && errors.push("You must agree to continue!");
-      return errors;
-    },
-    selectErrors() {
-      const errors = [];
-      if (!this.$v.select.$dirty) return errors;
-      !this.$v.select.required && errors.push("Item is required");
-      return errors;
-    },
-    nameErrors() {
-      const errors = [];
-      if (!this.$v.name.$dirty) return errors;
-      !this.$v.name.maxLength &&
-        errors.push("Name must be at most 10 characters long");
-      !this.$v.name.required && errors.push("Name is required.");
-      return errors;
-    },
-    emailErrors() {
-      const errors = [];
-      if (!this.$v.email.$dirty) return errors;
-      !this.$v.email.email && errors.push("Must be valid e-mail");
-      !this.$v.email.required && errors.push("E-mail is required");
-      return errors;
-    },
-  },
-
   methods: {
-    submit() {
-      this.$v.$touch();
-    },
-    clear() {
-      this.$v.$reset();
-      this.name = "";
-      this.email = "";
-      this.select = null;
-      this.checkbox = false;
-    },
+    login(){
+       this.$axios
+        .$post("/api/users/login", {
+          email:this.email,
+          password:this.password
+        })
+        .then((res) => {console.log(res)})
+        .catch((e) => {console.log(e)});
+    }
   },
 };
 </script>
+
+<style>
+</style>

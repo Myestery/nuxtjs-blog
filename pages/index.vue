@@ -1,14 +1,14 @@
 <template>
   <div>
-    <v-card v-for="article in articles" :key="article._id">
+    <v-card v-for="blog in blogs" :key="blog._id">
       <v-card-title primary-title>
         <div>
-          <h3 class="headline mb-0">{{ article.title }}</h3>
-          <div>{{ article.body }}</div>
+          <h3 class="headline mb-0">{{ blog.title }}</h3>
+          <div>{{ blog.body }}</div>
         </div>
       </v-card-title>
       <v-card-actions>
-        <v-btn color="primary">{{ article.author }}</v-btn>
+        <v-btn color="primary">{{ blog.author }}</v-btn> 
         <v-btn color="primary">text</v-btn>
       </v-card-actions>
     </v-card>
@@ -31,9 +31,9 @@ export default {
     res,
     $axios,
   }) {
-    let articles = await $axios.$get("/api/articles");
+    let blogs = await $axios.$get("/api/blogs");
     return {
-      articles,
+      blogs,
     };
   },
   components: {

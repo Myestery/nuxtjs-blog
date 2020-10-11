@@ -28,6 +28,12 @@
                 </v-list-item-icon>
                 <v-list-item-title>Account</v-list-item-title>
               </v-list-item>
+              <v-list-item to="/login" v-if="!auth.loggedIn">
+                <v-list-item-icon>
+                  <v-icon>mdi-account</v-icon>
+                </v-list-item-icon>
+                <v-list-item-title>Login</v-list-item-title>
+              </v-list-item>
             </v-list-item-group>
           </v-list>
         </v-navigation-drawer>
@@ -43,6 +49,7 @@
 </template>
 
 <script>
+import Vuex from 'vuex'
 export default {
   data: () => ({
     drawer: false,
@@ -50,6 +57,12 @@ export default {
   head: {
     link: [{ rel: "stylesheet", href: "/css/material.css", type: "text/css" }],
   },
+  computed: {
+    ...Vuex.mapState(["auth"]),
+  },
+  // mounted() {
+  //   console.log(this.$axios)
+  // },
 };
 </script>
 <style scoped>
