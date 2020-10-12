@@ -1,4 +1,4 @@
 export const state = () => ({
-    magic:false
-  })
+  magic: false
+});
 export default state;

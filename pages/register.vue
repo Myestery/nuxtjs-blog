@@ -70,14 +70,17 @@
 </template>
 <script>
 export default {
+  auth: "guest",
   data: () => ({
     valid: false,
     passwordRules: [(v) => !!v || "Password is required"],
     confirmPasswordRules: [
       (v) => !!v || "Password is required",
       (v) =>
-        v == document.getElementById("password").value ||
-        "Passwords do not match",
+        v ==
+          (document.getElementById("password")
+            ? document.getElementById("password").value
+            : undefined) || "Passwords do not match",
     ],
     nameRules: [(v) => !!v || "This Field is required"],
     showPassword: false,
@@ -96,16 +99,18 @@ export default {
       this.$axios
         .$post("/api/users/register", {
           surname: this.surname,
-          firstname:this.firstname,
-          email:this.email,
-          password:this.password
+          firstname: this.firstname,
+          email: this.email,
+          password: this.password,
         })
-        .then((res) => {console.log(res)})
-        .catch((e) => {console.log(e)});
+        .then((res) => {
+          console.log(res);
+        })
+        .catch((e) => {
+          console.log(e);
+        });
     },
   },
-  mounted() {
-
-  },
+  mounted() {},
 };
 </script>

@@ -24,15 +24,25 @@
       </v-list-item>
 
       <v-card-actions>
-        <v-btn style="margin-left:30px" depressed color="primary" :disabled="!valid" @click="login">LOGIN</v-btn>
+        <v-btn
+          style="margin-left:30px"
+          depressed
+          color="primary"
+          :disabled="!valid"
+          @click="login"
+        >LOGIN</v-btn>
       </v-card-actions>
-     <small> Not Registered, Click here to <nuxt-link to="register">Sign UP</nuxt-link></small>
+      <small>
+        Not Registered, Click here to
+        <nuxt-link to="register">Sign UP</nuxt-link>
+      </small>
     </v-card>
   </v-app>
 </template>
 
 <script>
 export default {
+  auth: "guest",
   data: () => ({
     valid: false,
     passwordRules: [(v) => !!v || "Password is required"],
@@ -45,15 +55,16 @@ export default {
     ],
   }),
   methods: {
-    login(){
-       this.$axios
-        .$post("/api/users/login", {
-          email:this.email,
-          password:this.password
+    login() {
+      this.$auth
+        .loginWith("local", {
+          data: {
+            email: this.email,
+            password: this.password,
+          },
         })
-        .then((res) => {console.log(res)})
-        .catch((e) => {console.log(e)});
-    }
+        .then(() => console.info("Logged In!"));
+    },
   },
 };
 </script>

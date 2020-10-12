@@ -1,10 +1,12 @@
 import Blog from "../models/Blog"
 const validator = require("express-validator");
+const config = require("../config");
+const jwt = require("jsonwebtoken");
 
 // Get all
 const list = function(req, res, next) {
   Blog.find()
-    .populate("User", ["full_name", "email"])
+    .populate("User", ["name", "email"])
     .exec(function(err, blogs) {
       if (err) {
         return res.status(500).json({
@@ -37,14 +39,6 @@ const show = function(req, res) {
 const create = [
   // validations rules
   validator.body("title", "Please enter Blog Title").isLength({ min: 1 }),
-  //   validator.body('title').custom(value => {
-  //     return Article.findOne({title:value}).then(article => {
-  //       if (article !== null) {
-  //         return Promise.reject('Title already in use');
-  //       }
-  //     })
-  //   }),
-  //   validator.body('author', 'Please enter Author Name').isLength({ min: 1 }),
   validator.body("body", "Please enter Article Content").isLength({ min: 1 }),
 
   function(req, res) {
@@ -53,12 +47,28 @@ const create = [
     if (!errors.isEmpty()) {
       return res.status(422).json({ errors: errors.mapped() });
     }
-
+    var token = req.headers.authorization;
+    let user;
+    if (token) {
+      // verifies secret and checks if the token is expired
+      jwt.verify(token.replace(/^Bearer\s/, ""), config.authSecret, function(
+        err,
+        decoded
+      ) {
+        if (err) {
+          return res.status(401).json({ message: "unauthorized" });
+        } else {
+          user = decoded
+        }
+      });
+    } else {
+      return res.status(401).json({ message: "unauthorized" });
+    }
     // initialize record
     let blog = new Blog({
       title: req.body.title,
       body: req.body.body,
-      User: req.body.user
+      User: user._id
     });
 
     // save record

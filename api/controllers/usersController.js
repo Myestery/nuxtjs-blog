@@ -96,10 +96,10 @@ module.exports.login = [
             user: {
               _id: user._id,
               email: user.email,
-              full_name: user.full_name
+              name: user.name
             },
             token: jwt.sign(
-              { _id: user._id, email: user.email},
+              { _id: user._id, email: user.email,name:user.name},
               config.authSecret
             ) // generate JWT token here
           });

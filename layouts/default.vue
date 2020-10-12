@@ -13,9 +13,15 @@
         </v-app-bar>
 
         <v-navigation-drawer v-model="drawer" absolute temporary>
+           <v-app-bar>
+          <h3>Blog</h3>
+         <v-btn rounded icon fab color="pink" @click="drawer = false" style="margin-left:70%">
+            <v-icon>close</v-icon>
+          </v-btn>
+        </v-app-bar>
           <v-list nav dense>
             <v-list-item-group active-class="deep-purple--text text--accent-4">
-              <v-list-item to="/">
+              <v-list-item to="/user/home">
                 <v-list-item-icon>
                   <v-icon>mdi-home</v-icon>
                 </v-list-item-icon>
@@ -38,7 +44,7 @@
           </v-list>
         </v-navigation-drawer>
         <v-main>
-          <nuxt />
+          <nuxt style="margin-top:30px"/>
         </v-main>
       </v-card>
       <v-footer app>
@@ -49,7 +55,7 @@
 </template>
 
 <script>
-import Vuex from 'vuex'
+import Vuex from "vuex";
 export default {
   data: () => ({
     drawer: false,
@@ -60,9 +66,6 @@ export default {
   computed: {
     ...Vuex.mapState(["auth"]),
   },
-  // mounted() {
-  //   console.log(this.$axios)
-  // },
 };
 </script>
 <style scoped>

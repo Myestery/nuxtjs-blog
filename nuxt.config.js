@@ -33,6 +33,9 @@ export default {
       { rel: "stylesheet", href: "/css/material-icon.css", type: "text/css" }
     ]
   },
+  router: {
+    middleware: ['auth']
+  },
   /*
    ** Global CSS
    */
@@ -116,13 +119,13 @@ export default {
           }
         },
         tokenRequired: true,
-        tokenType: "Bearer"
+        tokenType: "Bearer",
       }
     },
     redirect: {
       login: "/user/login", // User will be redirected to this path if login is required
       logout: "/", // User will be redirected to this path if after logout, current route is protected
-      home: "/" // User will be redirect to this path after login if accessed login page directly
+      home: "/user/home" // User will be redirect to this path after login if accessed login page directly
     },
     rewriteRedirects: true
   }
