@@ -20,7 +20,7 @@
     "jsonwebtoken": "^8.5.1",
     "mongoose": "^5.10.7",
     "nuxt": "^2.14.7",
-    "vee-validate": "^3.4.0",
+    "vee-validate": "^3.4.2",
     "vuelidate": "^0.7.5"
   },
   "devDependencies": {
