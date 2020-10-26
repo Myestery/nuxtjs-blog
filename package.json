@@ -21,7 +21,7 @@
     "mongoose": "^5.10.7",
     "nuxt": "^2.14.7",
     "vee-validate": "^3.4.0",
-    "vuelidate": "^0.7.5"
+    "vuelidate": "^0.7.6"
   },
   "devDependencies": {
     "@ava/babel": "^1.0.1",
