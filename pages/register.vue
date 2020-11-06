@@ -1,6 +1,11 @@
 <template>
   <v-app>
-    <v-card class="mx-auto" max-width="700" outlined style="margin-top:70px; width:500px">
+    <v-card
+      class="mx-auto"
+      max-width="700"
+      outlined
+      style="margin-top: 70px; width: 500px"
+    >
       <v-list-item three-line>
         <v-list-item-content>
           <div class="overline mb-4">REGISTER</div>
@@ -22,7 +27,13 @@
                 required
                 clearable
               ></v-text-field>
-              <v-text-field v-model="email" :rules="emailRules" label="E-mail" required clearable></v-text-field>
+              <v-text-field
+                v-model="email"
+                :rules="emailRules"
+                label="E-mail"
+                required
+                clearable
+              ></v-text-field>
               <v-text-field
                 :append-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
                 :rules="passwordRules"
@@ -54,12 +65,13 @@
 
       <v-card-actions>
         <v-btn
-          style="margin-left:30px"
+          style="margin-left: 30px"
           depressed
           color="success"
           :disabled="!valid"
           @click="register"
-        >REGISTER</v-btn>
+          >REGISTER</v-btn
+        >
       </v-card-actions>
       <small>
         Already Registered, Click here to
@@ -104,7 +116,12 @@ export default {
           password: this.password,
         })
         .then((res) => {
-          console.log(res);
+          this.$auth.loginWith("local", {
+            data: {
+              email: this.email,
+              password: this.password,
+            },
+          });
         })
         .catch((e) => {
           console.log(e);

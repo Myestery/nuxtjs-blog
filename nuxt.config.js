@@ -111,7 +111,10 @@ export default {
             method: "post",
             propertyName: "token"
           },
-          logout: true,
+          logout: {
+            url: "/api/users/logout",
+            method: "post"
+          },
           user: {
             url: "/api/users/user",
             method: "get",
@@ -123,7 +126,7 @@ export default {
       }
     },
     redirect: {
-      login: "/user/login", // User will be redirected to this path if login is required
+      login: "/login", // User will be redirected to this path if login is required
       logout: "/", // User will be redirected to this path if after logout, current route is protected
       home: "/user/home" // User will be redirect to this path after login if accessed login page directly
     },

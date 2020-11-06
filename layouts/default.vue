@@ -13,22 +13,41 @@
         </v-app-bar>
 
         <v-navigation-drawer v-model="drawer" absolute temporary>
-           <v-app-bar>
-          <h3>Blog</h3>
-         <v-btn rounded icon fab color="pink" @click="drawer = false" style="margin-left:70%">
-            <v-icon>close</v-icon>
-          </v-btn>
-        </v-app-bar>
+          <v-app-bar>
+            <h3><nuxt-link to="/">Blog</nuxt-link></h3>
+            <v-btn
+              rounded
+              icon
+              fab
+              color="pink"
+              @click="drawer = false"
+              style="margin-left: 70%"
+            >
+              <v-icon>close</v-icon>
+            </v-btn>
+          </v-app-bar>
           <v-list nav dense>
             <v-list-item-group active-class="deep-purple--text text--accent-4">
-              <v-list-item to="/user/home">
+              <v-list-item to="/">
                 <v-list-item-icon>
                   <v-icon>mdi-home</v-icon>
                 </v-list-item-icon>
                 <v-list-item-title>Home</v-list-item-title>
               </v-list-item>
+              <v-list-item to="/blogs">
+                <v-list-item-icon>
+                  <v-icon>mdi-filmstrip</v-icon>
+                </v-list-item-icon>
+                <v-list-item-title>Blogs</v-list-item-title>
+              </v-list-item>
+              <v-list-item to="/user/home" v-if="auth.loggedIn">
+                <v-list-item-icon>
+                  <v-icon>mdi-account-details</v-icon>
+                </v-list-item-icon>
+                <v-list-item-title>Dashboard</v-list-item-title>
+              </v-list-item>
 
-              <v-list-item to="/inspire">
+              <v-list-item to="/account" v-if="auth.loggedIn">
                 <v-list-item-icon>
                   <v-icon>mdi-account</v-icon>
                 </v-list-item-icon>
@@ -40,11 +59,17 @@
                 </v-list-item-icon>
                 <v-list-item-title>Login</v-list-item-title>
               </v-list-item>
+              <v-list-item v-if="auth.loggedIn" @click="Logout">
+                <v-btn icon>
+                  <v-icon>mdi-logout</v-icon>
+                </v-btn>
+                <v-list-item-title>Logout</v-list-item-title>
+              </v-list-item>
             </v-list-item-group>
           </v-list>
         </v-navigation-drawer>
         <v-main>
-          <nuxt style="margin-top:30px"/>
+          <nuxt style="margin-top: 30px" />
         </v-main>
       </v-card>
       <v-footer app>
@@ -65,6 +90,11 @@ export default {
   },
   computed: {
     ...Vuex.mapState(["auth"]),
+  },
+  methods: {
+    Logout() {
+      this.$auth.logout();
+    },
   },
 };
 </script>

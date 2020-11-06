@@ -1,27 +1,79 @@
 const config = require("../config");
 const User = require("../models/User");
-const validator = require("express-validator");
+const { body, validationResult } = require("express-validator");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
+var multer = require("multer");
+let avatar;
+const storage = multer.diskStorage({
+  destination: function(req, file, cb) {
+    cb(null, "static/img/thumbs/");
+  },
+  filename: function(req, file, cb) {
+    let user;
+    var token = req.headers.authorization;
+    if (token) {
+      // verifies secret and checks if the token is expired
+      jwt.verify(token.replace(/^Bearer\s/, ""), config.authSecret, function(
+        err,
+        decoded
+      ) {
+        if (err) {
+          return res.status(401).json({ message: "unauthorized" });
+        } else {
+          const errors = validationResult(req);
+          if (!errors.isEmpty()) {
+            return res.status(422).json({ errors: errors.mapped() });
+          }
+          user = decoded;
+        }
+      });
+    } else {
+      return res.status(401).json({ message: "unauthorized" });
+    }
+    var ext = file.originalname.split(".").pop();
+    avatar = `${user._id}.${ext}`;
+    cb(null, avatar);
+  }
+});
+
+export const upload = multer({
+  storage,
+  fileFilter: (req, file, cb) => {
+    // The function should call `cb` with a boolean
+    // to indicate if the file should be accepted
+
+    // To reject this file pass `false`, like so:
+    // cb(null, false)
+
+    // To accept the file pass `true`, like so:
+    let acceptable_formats = ["png", "jpg", "jpeg", "svg"];
+    if (acceptable_formats.includes(file.originalname.split(".").pop())) {
+      cb(null, true);
+    }
+    // You can always pass an error if something goes wrong:
+    // cb(new Error('I don\'t have a clue!'))
+  }
+}).single("avatar");
 
 // Register
-module.exports.register = [
+export const register = [
   // validations rules
-  validator.body("surname", "Please enter your  Surname").isLength({ min: 1 }),
-  validator.body("firstname", "Please enter Firstname").isLength({ min: 1 }),
-  validator.body("email", "Please enter Email").isLength({ min: 1 }),
-  validator.body("email").custom(value => {
+  body("surname", "Please enter your  Surname").isLength({ min: 1 }),
+  body("firstname", "Please enter Firstname").isLength({ min: 1 }),
+  body("email", "Please enter Email").isLength({ min: 1 }),
+  body("email").custom(value => {
     return User.findOne({ email: value }).then(user => {
       if (user !== null) {
         return Promise.reject("Email already in use");
       }
     });
   }),
-  validator.body("password", "Please enter Password").isLength({ min: 1 }),
+  body("password", "Please enter Password").isLength({ min: 1 }),
 
   function(req, res) {
     // throw validation errors
-    const errors = validator.validationResult(req);
+    const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return res.status(422).json({ errors: errors.mapped() });
     }
@@ -49,24 +101,21 @@ module.exports.register = [
       return res.json({
         message: "saved",
         _id: user._id,
-        token: jwt.sign(
-          { _id: user._id, email: user.email},
-          config.authSecret
-        ) 
+        token: jwt.sign({ _id: user._id, email: user.email }, config.authSecret)
       });
     });
   }
 ];
 
 // Login
-module.exports.login = [
+export const login = [
   // validation rules
-  validator.body("email", "Please enter Email").isLength({ min: 1 }),
-  validator.body("password", "Please enter Password").isLength({ min: 1 }),
+  body("email", "Please enter Email").isLength({ min: 1 }),
+  body("password", "Please enter Password").isLength({ min: 1 }),
 
   function(req, res) {
     // throw validation errors
-    const errors = validator.validationResult(req);
+    const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return res.status(422).json({ errors: errors.mapped() });
     }
@@ -99,7 +148,7 @@ module.exports.login = [
               name: user.name
             },
             token: jwt.sign(
-              { _id: user._id, email: user.email,name:user.name},
+              { _id: user._id, email: user.email, name: user.name },
               config.authSecret
             ) // generate JWT token here
           });
@@ -113,8 +162,70 @@ module.exports.login = [
   }
 ];
 
+//Logout
+export const logout = (req, res) => {
+  return res.status(200).json({
+    logged: "out"
+  });
+};
+
+//Edit
+export const edit = [
+  body("firstname", "Please enter firstname").isLength({ min: 2 }),
+  body("surname", "Please enter surname").isLength({ min: 2 }),
+  async function(req, res) {
+    let user;
+    let token = req.headers.authorization;
+    let rbody = req.body
+    if (token) {
+      const errors = validationResult(req);
+      if (!errors.isEmpty()) {
+        return res.status(422).json({ errors: errors.mapped() });
+      }
+      // verifies secret and checks if the token is expired
+      jwt.verify(token.replace(/^Bearer\s/, ""), config.authSecret, function(
+        err,
+        decoded
+      ) {
+        if (err) {
+          return res.status(401).json({ message: "unauthorized" });
+        } else {
+          user = decoded;
+        }
+      });
+    } else {
+      return res.status(401).json({ message: "unauthorized" });
+    }
+    // start updating the user
+    upload(req, res, function(err) {
+      if (err instanceof multer.MulterError) {
+        return res.status(422).json({ message: "bad file input" });
+      } else if (err) {
+        // An unknown error occurred when uploading.
+        return res.status(422).json({ message: "error uploading your file" });
+      }
+    });
+    /* jshint ignore:start */
+    let UpdatedUser = await User.findOneAndUpdate(
+      { _id: user._id },
+      {
+        name: {
+          firstname: rbody.firstname,
+          surname: rbody.surname
+        },
+        image: avatar.length?avatar:user.image
+      },
+      {
+        new: true
+      }
+    );
+    return res.json({ user: UpdatedUser });
+    /* jshint ignore:end */
+  }
+];
+
 // Get User
-module.exports.user = function(req, res) {
+export const user = function(req, res) {
   var token = req.headers.authorization;
   if (token) {
     // verifies secret and checks if the token is expired
@@ -125,7 +236,16 @@ module.exports.user = function(req, res) {
       if (err) {
         return res.status(401).json({ message: "unauthorized" });
       } else {
-        return res.json({ user: decoded });
+        // return res.json({ user: decoded });
+        User.findOne({ email: decoded.email }, ['name','email','image'],function(err, user) {
+          if (err) {
+            return res.status(500).json({
+              message: "Error logging in",
+              error: err
+            });
+          }
+          return res.json({ user });
+        });
       }
     });
   } else {

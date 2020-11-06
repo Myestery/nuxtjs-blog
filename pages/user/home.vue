@@ -1,6 +1,11 @@
 <template>
   <v-app>
-    <v-card class="mx-auto" max-width="700" outlined style="margin-top:70px; width:500px">
+    <v-card
+      class="mx-auto"
+      max-width="700"
+      outlined
+      style="margin-top: 70px; width: 500px"
+    >
       <v-list-item three-line>
         <v-list-item-content>
           <div class="overline mb-4">CREATE BLOG</div>
@@ -27,14 +32,18 @@
 
       <v-card-actions>
         <v-btn
-          style="margin-left:30px"
+          style="margin-left: 30px"
           depressed
           color="primary"
           :disabled="!valid"
           @click="post"
-        >POST</v-btn>
+          >POST</v-btn
+        >
       </v-card-actions>
     </v-card>
+    <v-alert dense text type="success" v-show="alert" dismissible>
+     Post Created Succesfully
+    </v-alert>
   </v-app>
 </template>
 
@@ -48,16 +57,18 @@ export default {
     valid: false,
     title: "",
     body: "",
+    alert: false,
     nameRules: [(v) => !!v || "This Field is required"],
   }),
   methods: {
-     async post(){
-          let res = await this.$axios.$post('/api/blogs',{
-              title:this.title,
-              body:this.body
-          })
-          console.log(res);
-      }
+    async post() {
+      let res = await this.$axios.$post("/api/blogs", {
+        title: this.title,
+        body: this.body,
+      });
+      this.alert =true
+      console.log(res);
+    },
   },
 };
 </script>

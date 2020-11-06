@@ -1,4 +1,5 @@
-import Blog from "../models/Blog"
+/*jshint -W014*/ 
+import Blog from "../models/Blog";
 const validator = require("express-validator");
 const config = require("../config");
 const jwt = require("jsonwebtoken");
@@ -8,19 +9,16 @@ const list = function(req, res, next) {
   Blog.find()
     .populate("User", ["name", "email"])
     .exec(function(err, blogs) {
-      if (err) {
-        return res.status(500).json({
-          message: "Error getting records."
-        });
-      }
-      return res.json(blogs);
+      return err
+        ? res.status(500).json({ message: "Error getting records." })
+        : res.json(blogs);
     });
 };
 
 // Get one
 const show = function(req, res) {
   var id = req.params.id;
-  Blog.findOne({ _id: id }, function(err, blog) {
+  Blog.findOne({ _id: id }, (err, blog)=> {
     if (err) {
       return res.status(500).json({
         message: "Error getting record."
@@ -58,7 +56,7 @@ const create = [
         if (err) {
           return res.status(401).json({ message: "unauthorized" });
         } else {
-          user = decoded
+          user = decoded;
         }
       });
     } else {
@@ -91,16 +89,7 @@ const create = [
 const update = [
   // validation rules
   validator.body("title", "Please enter Blog Title").isLength({ min: 1 }),
-  //   validator.body('title').custom( (value, {req}) => {
-  //     return Article.findOne({ title:value, _id:{ $ne: req.params.id } })
-  //       .then( article => {
-  //       if (article !== null) {
-  //         return Promise.reject('Title already in use');
-  //       }
-  //       })
 
-  //   }),
-  //   validator.body('author', 'Please enter Author Name').isLength({ min: 1 }),
   validator.body("body", "Please enter Blog Content").isLength({ min: 1 }),
 
   function(req, res) {

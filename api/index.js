@@ -9,7 +9,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // Require & Import API routes
-const users = require("./routes/users");
+import users from "./routes/users"
 const blogs = require("./routes/blogs");
 
 // Use API Routes

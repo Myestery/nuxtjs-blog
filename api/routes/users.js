@@ -1,18 +1,30 @@
-const config = require("../config");
+// const config = require("../config");
 const { Router } = require("express");
-
 const router = Router();
 
 // Initialize Controller
-const usersController = require("../controllers/usersController");
+import {
+  register,
+  login,
+  logout,
+  user,
+  edit,
+  upload
+} from "../controllers/usersController";
 
 // Register
-router.post("/users/register", usersController.register);
+router.post("/users/register", register);
 
 // Login
-router.post("/users/login", usersController.login);
+router.post("/users/login", login);
+
+// Logout
+router.post("/users/logout", logout);
 
 // Get User
-router.get("/users/user", usersController.user);
+router.get("/users/user", user);
 
-module.exports = router;
+// Edit User
+router.put("/users/edit", upload, edit);
+
+export default router;
