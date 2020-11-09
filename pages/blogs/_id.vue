@@ -1,13 +1,7 @@
 <template>
   <div>
-    <v-card
-      class="mx-auto"
-      max-width="700"
-      outlined
-      v-for="blog in blogs"
-      :key="blog._id"
-    >
-      <v-list-item three-line :to="`/blogs/${blog._id}`">
+    <v-card max-width="1000" class="mx-auto" outlined>
+      <v-list-item three-line to="/">
         <v-list-item-avatar
           ><img
             :src="`/img/thumbs/${blog.User.image}`"
@@ -29,39 +23,49 @@
       </v-list-item>
 
       <v-card-actions>
-        <v-btn icon color="pink">
+        <v-btn icon color="pink" @click="Like" >
           <v-icon>mdi-heart</v-icon> </v-btn
-        >50
-        <v-btn icon @click="commenting = true">
-          <v-icon>mdi-comment-plus</v-icon> </v-btn
-        >45
+        ><span>{{ blog.likes.length }}</span>
+        <v-btn icon>
+          <v-icon @click="commenting = true">mdi-comment-plus</v-icon> </v-btn
+        ><span>{{ blog.comments.length }}</span>
       </v-card-actions>
     </v-card>
-    <CommentBox @comment="commentHandler" :active="commenting" @close="commenting = false"/>
+    <CommentBox
+      @comment="commentHandler"
+      :active="commenting"
+      @close="commenting = false"
+    />
   </div>
 </template>
 
 <script>
 import Vuex from "vuex";
 export default {
-  async asyncData({ $axios }) {
-    let blogs = await $axios.$get("/api/blogs");
+  async asyncData({ $axios, route }) {
+    let blog = await $axios.$get(`/api/blogs/${route.params.id}`);
     return {
-      blogs,
+      blog,
     };
   },
   data() {
     return {
-     commenting:false
+      commenting: false,
     };
   },
   computed: {
     ...Vuex.mapState(["auth"]),
   },
   methods: {
-    commentHandler(comment){
-      console.log(comment);
-    }
+    commentHandler(comment) {
+      this.$axios.$post(`/api/blogs/${this.$route.params.id}/comment`, {
+        comment,
+        id: this.$route.params.id,
+      });
+    },
+    async Like() {
+      this.blog = await this.$axios.$post(`/api/blogs/${this.$route.params.id}/like`);
+    },
   },
 };
 </script>

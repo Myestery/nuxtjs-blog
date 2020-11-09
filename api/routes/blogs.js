@@ -4,21 +4,35 @@ const { Router } = require("express");
 const router = Router();
 
 // Initialize Controller
-import blogsController from "../controllers/blogsController";
+import {
+  list,
+  show,
+  create,
+  update,
+  remove,
+  addComment,
+  addLike
+} from "../controllers/blogsController";
 
 // Get All
-router.get("/blogs", blogsController.list);
+router.get("/blogs", list);
 
 // Get One
-router.get("/blogs/:id", blogsController.show);
+router.get("/blogs/:id", show);
 
 // Create
-router.post("/blogs", config.isAuthenticated, blogsController.create);
+router.post("/blogs", config.isAuthenticated, create);
 
 // Update
-router.put("/blogs/:id", config.isAuthenticated, blogsController.update);
+router.put("/blogs/:id", config.isAuthenticated, update);
 
 // Delete
-router.delete("/blogs/:id", config.isAuthenticated, blogsController.remove);
+router.delete("/blogs/:id", config.isAuthenticated, remove);
 
-module.exports = router;
+// New Comment
+router.post("/blogs/:id/comment", config.isAuthenticated, addComment);
+
+// New Like
+router.post("/blogs/:id/like", config.isAuthenticated, addLike);
+
+export default router;
