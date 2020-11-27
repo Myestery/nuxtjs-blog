@@ -224,7 +224,7 @@ export const addComment = [
 ];
 
 // Add Like
-export const addLike = (req, res) => {
+export const toggleLike = (req, res) => {
   var token = req.headers.authorization;
   let user;
   if (token) {
@@ -255,12 +255,13 @@ export const addLike = (req, res) => {
         message: "No such record"
       });
     }
-    // Add the like
-    blog.likes = [
-      ...blog.likes.filter(x => x.User != user._id),
-      { User: user._id }
-    ];
-
+    // Perform the like or unlike function
+    let otherLikes = blog.likes.filter(x => x.User != user._id);
+    blog.likes =
+      otherLikes.length == blog.likes.length
+        ? [...otherLikes, { User: user._id }]
+        : otherLikes;
+    
     // save record
     blog.save(function(err, blog) {
       if (err) {

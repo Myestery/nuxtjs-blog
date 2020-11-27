@@ -33,6 +33,7 @@
                 clearable
               ></v-text-field>
               <v-file-input
+                label="Upload a profile picture"
                 show-size
                 truncate-length="15"
                 id="file"

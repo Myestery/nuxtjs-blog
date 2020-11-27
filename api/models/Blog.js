@@ -20,7 +20,7 @@ const Blog = new Schema(
     ],
     likes: [
       new Schema({
-        User: { type: Schema.Types.ObjectId, ref: "User", required: true,unique:true }
+        User: { type: Schema.Types.ObjectId, ref: "User", required: true}
       })
     ]
   },

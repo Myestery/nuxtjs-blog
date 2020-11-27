@@ -11,7 +11,7 @@ import {
   update,
   remove,
   addComment,
-  addLike
+  toggleLike
 } from "../controllers/blogsController";
 
 // Get All
@@ -33,6 +33,6 @@ router.delete("/blogs/:id", config.isAuthenticated, remove);
 router.post("/blogs/:id/comment", config.isAuthenticated, addComment);
 
 // New Like
-router.post("/blogs/:id/like", config.isAuthenticated, addLike);
+router.post("/blogs/:id/like", config.isAuthenticated, toggleLike);
 
 export default router;
